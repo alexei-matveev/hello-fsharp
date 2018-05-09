@@ -2,9 +2,7 @@
 /// #!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300-rc1-008673/FSharp/fsi.exe
 
 // Hm, printfn "plain string" ist a type error ...
-let greeting = "Hello, World!"
-    in
-    printfn "%s" greeting
+let greeting = "Hello, World!" in printfn "%s" greeting
 
 for arg in fsi.CommandLineArgs do
     printfn "%s" arg
