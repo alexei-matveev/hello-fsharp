@@ -1,4 +1,5 @@
-#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300-rc1-008673/FSharp/fsi.exe
+#!/usr/bin/fsharpi
+/// #!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300-rc1-008673/FSharp/fsi.exe
 
 // Hm, printfn "plain string" ist a type error ...
 let greeting = "Hello, World!"
@@ -467,6 +468,7 @@ module RecordTypes =
     printfn "Alf's alternate contact card is %s" contactAlternate.PrintedContactCard
 ;;
 
+(*
 /// Records can also be represented as structs via the 'Struct' attribute.
 /// This is helpful in situations where the performance of structs outweighs
 /// the flexibility of reference types.
@@ -476,6 +478,7 @@ type ContactCardStruct =
       Phone    : string
       Verified : bool }
 ;;
+*)
 
 module DiscriminatedUnions = 
 
@@ -591,6 +594,7 @@ let rec insert item bst =
         else Node(x, left, insert item right) // Call into right subtree.
 ;;
 
+(*
 /// Discriminated Unions can also be represented as structs via the 'Struct' attribute.
 /// This is helpful in situations where the performance of structs outweighs
 /// the flexibility of reference types.
@@ -604,6 +608,7 @@ type Shape =
     | Square of side: float
     | Triangle of height: float * width: float
 ;;
+*)
 
 module PatternMatching =
 
