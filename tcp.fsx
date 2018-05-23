@@ -13,9 +13,9 @@ let getBytes (s:string) = System.Text.Encoding.UTF8.GetBytes s
 
 let response: byte[] =
   use client = new TcpClient("google.com", 80)
-  use s = client.GetStream()
-  write s (getBytes "GET / HTTP/1.1\r\n\r\n")
-  let res = read s 256
+  use stream = client.GetStream()
+  write stream (getBytes "GET / HTTP/1.1\r\n\r\n")
+  let res = read stream 256
   res
 
 printfn "%s" (getString response)
