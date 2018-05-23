@@ -12,8 +12,8 @@ let makeStream host port =
     let client = new TcpClient(host, port)
     client.GetStream()
 
-let getString (b: byte[]) = System.Text.Encoding.ASCII.GetString b
-let getBytes (s:string) = System.Text.Encoding.ASCII.GetBytes s
+let getString (b: byte[]) = System.Text.Encoding.UTF8.GetString b
+let getBytes (s:string) = System.Text.Encoding.UTF8.GetBytes s
 
 let response: byte[] =
   let s = makeStream "google.com" 80
