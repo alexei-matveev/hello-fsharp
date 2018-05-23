@@ -12,13 +12,16 @@ let makeStream host port =
     let client = new TcpClient(host, port)
     client.GetStream()
 
+let getString (b: byte[]) = System.Text.Encoding.ASCII.GetString b
+let getBytes (s:string) = System.Text.Encoding.ASCII.GetBytes s
+
 let response: byte[] =
   let s = makeStream "google.com" 80
-  write s "GET / HTTP/1.1\r\n\r\n"B
+  write s (getBytes "GET / HTTP/1.1\r\n\r\n")
   let res = read s 256
   s.Close()
   res
 
-printfn "%s" (System.Text.Encoding.ASCII.GetString response)
+printfn "%s" (getString response)
 
 
