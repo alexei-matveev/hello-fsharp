@@ -1,11 +1,11 @@
 open System.Net.Sockets
 
-let read n (s: NetworkStream)  =
+let read (s: NetworkStream) n =
     let buf = Array.zeroCreate n
     s.Read(buf, 0, n) |> ignore
     buf
 
-let write buf (s: NetworkStream) =
+let write (s: NetworkStream) buf =
     s.Write(buf, 0, buf.Length)
 
 let makeStream host port =
@@ -14,8 +14,8 @@ let makeStream host port =
 
 let response: byte[] =
   let s = makeStream "google.com" 80
-  write "GET / HTTP/1.1\r\n\r\n"B s
-  let res = read 256 s
+  write s "GET / HTTP/1.1\r\n\r\n"B
+  let res = read s 256
   s.Close()
   res
 
