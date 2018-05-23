@@ -1,5 +1,3 @@
-open System.Net
-open System.Text 
 open System.Net.Sockets
 
 let read n (s: NetworkStream)  =
