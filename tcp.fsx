@@ -3,11 +3,14 @@ open System.Text
 open System.Net.Sockets
 
 type stream = NetworkStream
-let curry g b n = g(b,0,n) |> ignore; b
 
-let read  n (s : stream) = curry s.Read (Array.zeroCreate n) n
+let read n (s: stream) =
+    let a = Array.zeroCreate n
+    s.Read(a, 0, n) |> ignore
+    a
 
-let write b (s : stream) = curry s.Write b b.Length
+let write b (s : stream) =
+    s.Write(b, 0, b.Length)
 
 let connect host port = TcpClient(host, port).GetStream()
 
