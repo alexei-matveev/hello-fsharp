@@ -9,15 +9,16 @@ let write (s: NetworkStream) buf =
     s.Write(buf, 0, buf.Length)
 
 let getString (b: byte[]) = System.Text.Encoding.UTF8.GetString b
-let getBytes (s:string) = System.Text.Encoding.UTF8.GetBytes s
+let getBytes (s: string) = System.Text.Encoding.UTF8.GetBytes s
 
-let response: byte[] =
-  use client = new TcpClient("google.com", 80)
+let ping host port request =
+  use client = new TcpClient(host, port)
   use stream = client.GetStream()
-  write stream (getBytes "GET / HTTP/1.1\r\n\r\n")
+  write stream (getBytes request)
   let res = read stream 256
-  res
+  getString res
 
-printfn "%s" (getString response)
+let response = ping "google.com" 80 "GET / HTTP/1.1\r\n\r\n" in
+    printfn "%s" response
 
 
