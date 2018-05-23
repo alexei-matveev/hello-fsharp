@@ -2,20 +2,20 @@ open System.Net
 open System.Text 
 open System.Net.Sockets
 
-type stream = NetworkStream
+let read n (s: NetworkStream)  =
+    let buf = Array.zeroCreate n
+    s.Read(buf, 0, n) |> ignore
+    buf
 
-let read n (s: stream) =
-    let a = Array.zeroCreate n
-    s.Read(a, 0, n) |> ignore
-    a
+let write buf (s: NetworkStream) =
+    s.Write(buf, 0, buf.Length)
 
-let write b (s : stream) =
-    s.Write(b, 0, b.Length)
-
-let connect host port = TcpClient(host, port).GetStream()
+let makeStream host port =
+    let client = new TcpClient(host, port)
+    client.GetStream()
 
 let response: byte[] =
-  let s = connect "google.com" 80
+  let s = makeStream "google.com" 80
   write "GET / HTTP/1.1\r\n\r\n"B s
   let res = read 256 s
   s.Close()
