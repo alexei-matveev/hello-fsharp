@@ -1,3 +1,5 @@
+#!/usr/bin/env fsharpi
+
 open System.Net.Sockets
 
 let read (s: NetworkStream) n =
