@@ -21,7 +21,7 @@ let ping host port request =
     let res = read stream 256
     getString res
 
-let response = ping "google.com" 80 "GET / HTTP/1.1\r\n\r\n" in
+let response = ping "localhost" 80 "GET / HTTP/1.1\r\n\r\n" in
     printfn "%s" response
 
 
