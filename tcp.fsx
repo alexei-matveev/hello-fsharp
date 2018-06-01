@@ -63,10 +63,9 @@ let ping host port json =
     let text_bytes = read stream (int length)
     getString text_bytes
 
-// This ist  how an active Zabbix  client asks for the  definitions of
-// mertrics and intervals the server  wants to know. The response will
-// likely be  {"response":"failed","info":"host [host.example.com] not
-// found"}
+// This is how an active Zabbix client requests definitions of metrics
+// the server wants to know.  You will likely get "host ... not found"
+// back:
 let json =  """{"request": "active checks", "host": "host.example.com"}"""
 let response = ping "localhost" 10051 json
 // response = """{"response":"failed","info":"host [host.example.com] not found"}"""
