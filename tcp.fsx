@@ -25,7 +25,8 @@ let getString (b: byte[]) =
 let getBytes (s: string) =
     System.Text.Encoding.UTF8.GetBytes s
 
-// The first five bytes of most request and responses on the wire:
+// The first five bytes of most Zabbix messages between the server and
+// the agent:
 let zbx_magic = Array.append (getBytes "ZBXD") [|1uy|]
 
 // zbx_magic = [|90uy; 66uy; 88uy; 68uy; 1uy|]
@@ -33,17 +34,21 @@ let zbx_magic = Array.append (getBytes "ZBXD") [|1uy|]
 // Unsigned  long ->  little endian  byte  array. That  is how  Zabbix
 // encodes the length  of the JSON Text after the  magic string on the
 // wire:
-let make_length (x: uint64) =
+let make_bytes (x: uint64) =
     [|for i in 0 .. 7 -> byte ((x >>> (i * 8)) &&& 0xFFUL)|]
 
-// (make_length 56UL) = [|56uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
+// (make_bytes 56UL) = [|56uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
+
+let make_uint64 (bs: byte[]) =
+    Array.sum [|for i in 0 .. 7 -> ((uint64 bs.[i]) <<< (i * 8))|]
+
+// (make_uint64 (make_bytes 1234567890UL)) = 1234567890UL
 
 let make_request json =
-    let length_bytes = make_length (uint64 (String.length json))
-    printfn "length_bytes = %A" length_bytes
+    let text_length_le = make_bytes (uint64 (String.length json))
     let json_bytes = getBytes json
     let f = Array.append
-    f (f zbx_magic length_bytes) json_bytes
+    f (f zbx_magic text_length_le) json_bytes
 
 // make_request "" = [|90uy; 66uy; 88uy; 68uy; 1uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
@@ -51,10 +56,12 @@ let ping host port json =
     use client = new TcpClient(host, port)
     use stream = client.GetStream()
     let body = make_request json
-    printfn "body = %A" body
     write stream body
-    let res = read stream (256 + 195)
-    getString res
+    let magic = read stream (4 + 1)     // ZBXD\1
+    let text_length_le = read stream 8  // little endian
+    let length = make_uint64 text_length_le
+    let text_bytes = read stream (int length)
+    getString text_bytes
 
 // This ist  how an active Zabbix  client asks for the  definitions of
 // mertrics and intervals the server  wants to know. The response will
@@ -62,6 +69,8 @@ let ping host port json =
 // found"}
 let json =  """{"request": "active checks", "host": "host.example.com"}"""
 let response = ping "localhost" 10051 json
+// response = """{"response":"failed","info":"host [host.example.com] not found"}"""
+
 printfn "%s" response
 
 
