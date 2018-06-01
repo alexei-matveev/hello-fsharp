@@ -1,4 +1,4 @@
-#!/usr/bin/env fsharpi
+// #!/usr/bin/env fsharpi
 
 (*
    For Zabbix Protocoll in C# see a few libraries on Zabbix Share [1]
@@ -7,6 +7,8 @@
    [1] https://share.zabbix.com/dir-libraries/c
    [2] https://github.com/marksl/nabbix
 *)
+
+module ZabbixProto
 
 open System.Net.Sockets
 // open FSharp.Data
@@ -70,6 +72,6 @@ let json =  """{"request": "active checks", "host": "host.example.com"}"""
 let response = ping "localhost" 10051 json
 // response = """{"response":"failed","info":"host [host.example.com] not found"}"""
 
-printfn "%s" response
+let test () = printfn "%s" response
 
 
