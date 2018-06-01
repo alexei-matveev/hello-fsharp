@@ -25,21 +25,18 @@ let getString (b: byte[]) =
 let getBytes (s: string) =
     System.Text.Encoding.UTF8.GetBytes s
 
+// The first five bytes of most request and responses on the wire:
 let zbx_magic = Array.append (getBytes "ZBXD") [|1uy|]
-// printfn "%A" zbx_magic
 
-// FIXME: very imperative.
+// zbx_magic = [|90uy; 66uy; 88uy; 68uy; 1uy|]
+
+// Unsigned  long ->  little endian  byte  array. That  is how  Zabbix
+// encodes the length  of the JSON Text after the  magic string on the
+// wire:
 let make_length (x: uint64) =
-    let mutable y = x
-    let (buf: byte[]) = Array.zeroCreate 8
-    for i = 0 to 7 do
-        let b = byte (y &&& 0xFFUL)
-        printfn "byte = %A" b
-        buf.[i] <- b
-        y <- (y >>> 8)
-    buf
+    [|for i in 0 .. 7 -> byte ((x >>> (i * 8)) &&& 0xFFUL)|]
 
-printfn "%A" (make_length (uint64 256))
+// (make_length 56UL) = [|56uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
 let make_request json =
     let length_bytes = make_length (uint64 (String.length json))
@@ -47,6 +44,8 @@ let make_request json =
     let json_bytes = getBytes json
     let f = Array.append
     f (f zbx_magic length_bytes) json_bytes
+
+// make_request "" = [|90uy; 66uy; 88uy; 68uy; 1uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
 let ping host port json =
     use client = new TcpClient(host, port)
