@@ -39,8 +39,8 @@ let make_bytes (x: uint64) =
 
 // (make_bytes 56UL) = [|56uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
-let make_uint64 (bs: byte[]) =
-    Seq.sum (seq {for i in 0 .. 7 do yield ((uint64 bs.[i]) <<< (i * 8))})
+let make_uint64 (bytes: byte[]) =
+    Array.fold (fun acc b -> (acc <<< 8) + (uint64 b)) 0UL (Array.rev bytes)
 
 // (make_uint64 (make_bytes 1234567890UL)) = 1234567890UL
 
