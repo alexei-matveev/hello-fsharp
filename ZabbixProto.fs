@@ -11,7 +11,7 @@
 module ZabbixProto
 
 open System.Net.Sockets
-// open FSharp.Data
+open FSharp.Data
 
 let read (s: NetworkStream) n =
     let buf = Array.zeroCreate n
@@ -72,6 +72,7 @@ let json =  """{"request": "active checks", "host": "host.example.com"}"""
 let response = ping "localhost" 10051 json
 // response = """{"response":"failed","info":"host [host.example.com] not found"}"""
 
-let test () = printfn "%s" response
-
+let test () =
+    let json_obj = JsonValue.Parse(response)
+    printfn "%A" json_obj
 
