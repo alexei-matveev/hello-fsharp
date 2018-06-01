@@ -9,6 +9,7 @@
 *)
 
 open System.Net.Sockets
+// open FSharp.Data
 
 let read (s: NetworkStream) n =
     let buf = Array.zeroCreate n
@@ -27,14 +28,41 @@ let getBytes (s: string) =
 let zbx_magic = Array.append (getBytes "ZBXD") [|1uy|]
 // printfn "%A" zbx_magic
 
-let ping host port request =
+// FIXME: very imperative.
+let make_length (x: uint64) =
+    let mutable y = x
+    let (buf: byte[]) = Array.zeroCreate 8
+    for i = 0 to 7 do
+        let b = byte (y &&& 0xFFUL)
+        printfn "byte = %A" b
+        buf.[i] <- b
+        y <- (y >>> 8)
+    buf
+
+printfn "%A" (make_length (uint64 256))
+
+let make_request json =
+    let length_bytes = make_length (uint64 (String.length json))
+    printfn "length_bytes = %A" length_bytes
+    let json_bytes = getBytes json
+    let f = Array.append
+    f (f zbx_magic length_bytes) json_bytes
+
+let ping host port json =
     use client = new TcpClient(host, port)
     use stream = client.GetStream()
-    write stream (getBytes request)
-    let res = read stream 256
+    let body = make_request json
+    printfn "body = %A" body
+    write stream body
+    let res = read stream (256 + 195)
     getString res
 
-let response = ping "localhost" 80 "GET / HTTP/1.1\r\n\r\n" in
-    printfn "%s" response
+// This ist  how an active Zabbix  client asks for the  definitions of
+// mertrics and intervals the server  wants to know. The response will
+// likely be  {"response":"failed","info":"host [host.example.com] not
+// found"}
+let json =  """{"request": "active checks", "host": "host.example.com"}"""
+let response = ping "localhost" 10051 json
+printfn "%s" response
 
 
