@@ -1,4 +1,5 @@
 // #!/usr/bin/env fsharpi
+// #!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300/FSharp/fsi.exe
 
 (*
    For Zabbix Protocoll in C# see a few libraries on Zabbix Share [1]
