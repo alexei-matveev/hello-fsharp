@@ -1,5 +1,5 @@
-#!/usr/bin/fsharpi
-/// #!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300-rc1-008673/FSharp/fsi.exe
+#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300/FSharp/fsi.exe
+// #!/usr/bin/fsharpi
 
 // Hm, printfn "plain string" ist a type error ...
 let greeting = "Hello, World!" in printfn "%s" greeting
