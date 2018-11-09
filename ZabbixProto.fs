@@ -13,6 +13,7 @@ module ZabbixProto
 
 open System.Net.Sockets
 open FSharp.Data
+open FSharp.Data.JsonExtensions
 
 let read (s: NetworkStream) n =
     let buf = Array.zeroCreate n
@@ -74,6 +75,9 @@ let response = ping "localhost" 10051 json
 // response = """{"response":"failed","info":"host [host.example.com] not found"}"""
 
 let test () =
-    let json_obj = JsonValue.Parse(response)
-    printfn "%A" json_obj
+    let obj = JsonValue.Parse(response)
+    printfn "%A" obj
+    let items = (obj?data)
+    for i in items do
+        printfn "key = %s, delay = %d" (i?key.AsString()) (i?delay.AsInteger())
 
