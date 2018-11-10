@@ -29,10 +29,9 @@ let MakeBytes (s: string) =
     System.Text.Encoding.UTF8.GetBytes s
 
 // The first five bytes of most Zabbix messages between the server and
-// the agent:
-let ZBX_MAGIC = Array.append (MakeBytes "ZBXD") [|1uy|]
-
-// zbx_magic = [|90uy; 66uy; 88uy; 68uy; 1uy|]
+// the agent. And, yes \u0001 character is a single byte:
+let ZBX_MAGIC = MakeBytes "ZBXD\u0001"
+//  ZBX_MAGIC = [|90uy; 66uy; 88uy; 68uy; 1uy|]
 
 // Unsigned  long ->  little endian  byte  array. That  is how  Zabbix
 // encodes the length  of the JSON Text after the  magic string on the
