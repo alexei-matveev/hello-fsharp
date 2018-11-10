@@ -48,10 +48,11 @@ let FromLittleEndian (bytes: byte[]) =
 // (make_uint64 (make_bytes 1234567890UL)) = 1234567890UL
 
 let MakeRequest json =
-    let length_le = MakeLittleEndian (uint64 (String.length json))
-    let json_bytes = MakeBytes json
+    let bytes = MakeBytes json
+    // Byte count <> string length!
+    let length = uint64 (Array.length bytes)
     let f = Array.append
-    f (f ZBX_MAGIC length_le) json_bytes
+    f (f ZBX_MAGIC (MakeLittleEndian length)) bytes
 
 // make_request "" = [|90uy; 66uy; 88uy; 68uy; 1uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
@@ -61,8 +62,7 @@ let SendReceive host port json =
     let body = MakeRequest json
     Write stream body
     let magic = Read stream (4 + 1)     // ZBXD\1
-    let length_le = Read stream 8  // little endian
-    let length = FromLittleEndian length_le
+    let length = FromLittleEndian (Read stream 8)
     let text_bytes = Read stream (int length)
     FromBytes text_bytes
 
@@ -87,7 +87,7 @@ let Test () =
     let request =
         JsonValue.Record [|
             "request",  JsonValue.String "active checks";
-            "host",     JsonValue.String "host.example.com"|]
+            "host",     JsonValue.String "хост.example.com"|]
     printfn "request = %A" request
     let response = SendReceiveJsonValue "localhost" 10051 request
     printfn "%A" response
