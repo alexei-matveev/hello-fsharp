@@ -74,16 +74,16 @@ let test () =
     let json =  """{"request": "active checks", "host": "host.example.com"}"""
     let response =
         try
-                ping "localhost" 10051 json
+            ping "localhost" 10051 json
         with
-                // Server may report errors in similar shape, e.g.:
-                // """{"response":"failed","info":"host [host.example.com] not found"}"""
-                | ex -> """{"response":"failed","info":"Exception occured"}"""
+            // Server may report errors in similar shape, e.g.:
+            // """{"response":"failed","info":"host [host.example.com] not found"}"""
+            | ex -> """{"response":"failed","info":"Exception occured"}"""
     let obj = JsonValue.Parse(response)
     printfn "%A" obj
     match obj.TryGetProperty("data") with
     | None -> printfn "No data!"
     | Some items ->
         for i in items do
-                printfn "key = %s, delay = %d" (i.["key"].AsString()) (i?delay.AsInteger())
+            printfn "key = %s, delay = %d" (i.["key"].AsString()) (i?delay.AsInteger())
 
