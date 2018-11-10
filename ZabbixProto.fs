@@ -67,14 +67,18 @@ let ping host port json =
     let text_bytes = read stream (int length)
     getString text_bytes
 
-// This is how an active Zabbix client requests definitions of metrics
-// the server wants to know.  You will likely get "host ... not found"
-// back:
-let json =  """{"request": "active checks", "host": "host.example.com"}"""
-let response = ping "localhost" 10051 json
-// response = """{"response":"failed","info":"host [host.example.com] not found"}"""
-
 let test () =
+    // This is how an active Zabbix client requests definitions of metrics
+    // the server wants to know.  You will likely get "host ... not found"
+    // back:
+    let json =  """{"request": "active checks", "host": "host.example.com"}"""
+    let response =
+        try
+                ping "localhost" 10051 json
+        with
+                // Server may report errors in similar shape, e.g.:
+                // """{"response":"failed","info":"host [host.example.com] not found"}"""
+                | ex -> """{"response":"failed","info":"Exception occured"}"""
     let obj = JsonValue.Parse(response)
     printfn "%A" obj
     let items = (obj?data)
