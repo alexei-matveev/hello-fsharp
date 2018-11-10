@@ -1,7 +1,11 @@
 #!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.403/FSharp/fsi.exe
 // #!/usr/bin/fsharpi
 
-// Hm, printfn "plain string" ist a type error ...
+// Hm, printfn "plain string" is not the same as
+//
+//     let x = "plain string" in printfn x
+//
+// Is a string literal not the same typa as string var?
 let greeting = "Hello, World!" in printfn "%s" greeting
 
 for arg in fsi.CommandLineArgs do
