@@ -1,4 +1,4 @@
-#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.300/FSharp/fsi.exe
+#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.403/FSharp/fsi.exe
 // #!/usr/bin/fsharpi
 
 // Hm, printfn "plain string" ist a type error ...
