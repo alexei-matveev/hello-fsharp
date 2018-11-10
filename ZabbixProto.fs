@@ -29,7 +29,7 @@ let MakeBytes (s: string) =
     System.Text.Encoding.UTF8.GetBytes s
 
 // The first five bytes of most Zabbix messages between the server and
-// the agent. And, yes \u0001 character is a single byte:
+// the agent. And, yes \u0001 character is a single byte in UTF-8:
 let ZBX_MAGIC = MakeBytes "ZBXD\u0001"
 //  ZBX_MAGIC = [|90uy; 66uy; 88uy; 68uy; 1uy|]
 
