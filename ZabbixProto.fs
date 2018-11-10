@@ -81,7 +81,9 @@ let test () =
                 | ex -> """{"response":"failed","info":"Exception occured"}"""
     let obj = JsonValue.Parse(response)
     printfn "%A" obj
-    let items = (obj?data)
-    for i in items do
-        printfn "key = %s, delay = %d" (i?key.AsString()) (i?delay.AsInteger())
+    match obj.TryGetProperty("data") with
+    | None -> printfn "No data!"
+    | Some items ->
+        for i in items do
+                printfn "key = %s, delay = %d" (i.["key"].AsString()) (i?delay.AsInteger())
 
