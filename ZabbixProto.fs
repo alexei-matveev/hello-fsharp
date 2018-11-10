@@ -56,7 +56,7 @@ let make_request json =
 
 // make_request "" = [|90uy; 66uy; 88uy; 68uy; 1uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
-let ping host port json =
+let send_recv host port json =
     use client = new TcpClient(host, port)
     use stream = client.GetStream()
     let body = make_request json
@@ -66,6 +66,19 @@ let ping host port json =
     let length = make_uint64 text_length_le
     let text_bytes = read stream (int length)
     getString text_bytes
+
+let SendReceiveText host port json =
+    try
+        send_recv host port json
+    with
+        // Server may report errors in similar shape, e.g.:
+        // """{"response":"failed","info":"host [host.example.com] not found"}"""
+        | _ -> """{"response":"failed","info":"Exception occured"}"""
+
+let SendReceiveJsonValue host port json: JsonValue =
+    let inp = json.ToString()
+    let out = SendReceiveText host port inp
+    JsonValue.Parse(out)
 
 let test () =
     // This is how an active Zabbix client requests definitions of metrics
@@ -77,17 +90,9 @@ let test () =
             "request",  JsonValue.String "active checks";
             "host",     JsonValue.String "host.example.com"|]
     printfn "request = %A" request
-    let json = request.ToString()
-    let response =
-        try
-            ping "localhost" 10051 json
-        with
-            // Server may report errors in similar shape, e.g.:
-            // """{"response":"failed","info":"host [host.example.com] not found"}"""
-            | ex -> """{"response":"failed","info":"Exception occured"}"""
-    let obj = JsonValue.Parse(response)
-    printfn "%A" obj
-    match obj.TryGetProperty("data") with
+    let response = SendReceiveJsonValue "localhost" 10051 request
+    printfn "%A" response
+    match response.TryGetProperty("data") with
     | None -> printfn "No data!"
     | Some items ->
         for i in items do
