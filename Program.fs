@@ -6,5 +6,5 @@ open ZabbixProto
 [<EntryPoint>]
 let main argv =
     printfn "Hello World from F#!"
-    ZabbixProto.test()
+    Test()
     0 // return an integer exit code
