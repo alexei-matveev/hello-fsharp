@@ -71,7 +71,13 @@ let test () =
     // This is how an active Zabbix client requests definitions of metrics
     // the server wants to know.  You will likely get "host ... not found"
     // back:
-    let json =  """{"request": "active checks", "host": "host.example.com"}"""
+    // """{"request": "active checks", "host": "host.example.com"}"""
+    let request =
+        JsonValue.Record [|
+            "request",  JsonValue.String "active checks";
+            "host",     JsonValue.String "host.example.com"|]
+    printfn "request = %A" request
+    let json = request.ToString()
     let response =
         try
             ping "localhost" 10051 json
