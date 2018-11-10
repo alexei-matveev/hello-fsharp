@@ -38,13 +38,11 @@ let ZBX_MAGIC = MakeBytes "ZBXD\u0001"
 // wire:
 let MakeLittleEndian (x: uint64) =
     [|for i in 0 .. 7 -> byte ((x >>> (i * 8)) &&& 0xFFUL)|]
-
-// (make_bytes 56UL) = [|56uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
+// (MakeLittleEndian 56UL) = [|56uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
 let FromLittleEndian (bytes: byte[]) =
     Array.fold (fun acc b -> (acc <<< 8) + (uint64 b)) 0UL (Array.rev bytes)
-
-// (make_uint64 (make_bytes 1234567890UL)) = 1234567890UL
+// (FromLittleEndian (MakeLittleEndian 1234567890UL)) = 1234567890UL
 
 let MakeRequest json =
     let bytes = MakeBytes json
