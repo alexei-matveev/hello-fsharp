@@ -9,6 +9,7 @@
    [2] https://github.com/marksl/nabbix
 *)
 
+[<RequireQualifiedAccess>]
 module ZabbixProto
 open System.Net.Sockets
 open FSharp.Data
