@@ -71,7 +71,7 @@ let SafeSendReceive host port json =
         // """{"response":"failed","info":"host [host.example.com] not found"}"""
         | _ -> """{"response":"failed","info":"Exception occured"}"""
 
-let SendReceiveJsonValue host port json: JsonValue =
+let SendReceiveJsonValue host port (json: JsonValue): JsonValue =
     let inp = json.ToString()
     let out = SafeSendReceive host port inp
     JsonValue.Parse(out)
