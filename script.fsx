@@ -1,4 +1,4 @@
-#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.403/FSharp/fsi.exe
+#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.500/FSharp/fsi.exe
 // #!/usr/bin/fsharpi
 
 // Hm, printfn "plain string" is not the same as
