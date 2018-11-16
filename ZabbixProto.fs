@@ -49,8 +49,7 @@ let MakeRequest json =
     let bytes = MakeBytes json
     // Byte count <> string length!
     let length = uint64 (Array.length bytes)
-    let f = Array.append
-    f (f ZBX_MAGIC (MakeLittleEndian length)) bytes
+    Array.concat [|ZBX_MAGIC; (MakeLittleEndian length); bytes|]
 
 // make_request "" = [|90uy; 66uy; 88uy; 68uy; 1uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy; 0uy|]
 
