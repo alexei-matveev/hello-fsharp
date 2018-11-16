@@ -1,4 +1,4 @@
-// #!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.403/FSharp/fsi.exe
+#!/usr/bin/dotnet /usr/share/dotnet/sdk/2.1.500/FSharp/fsi.exe
 // #!/usr/bin/env fsharpi
 
 (*
@@ -9,8 +9,17 @@
    [2] https://github.com/marksl/nabbix
 *)
 
+#if INTERACTIVE
+#r "System.Net.Sockets.dll"
+#r "FSharp.Core.dll"
+// Search Path must be hardcoded, sigh ...
+// https://github.com/Microsoft/visualfsharp/issues/1177
+#I "/home/alexei/.nuget/packages/fsharp.data/3.0.0/lib/netstandard2.0/"
+#r "FSharp.Data.dll"
+#else
 [<RequireQualifiedAccess>]
 module ZabbixProto
+#endif
 open System.Net.Sockets
 open FSharp.Data
 open FSharp.Data.JsonExtensions
@@ -94,3 +103,6 @@ let Test () =
         for i in items do
             printfn "key = %s, delay = %d" (i.["key"].AsString()) (i?delay.AsInteger())
 
+#if INTERACTIVE
+Test ()
+#endif
